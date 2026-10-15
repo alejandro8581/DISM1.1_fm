@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión Usuarios</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let u of usuarios">
+      <ion-label>
+        <h2>{{ u.Nombre }}</h2>
+        <p>Usuario: {{ u.Usuario }} | ID: {{ u.IdUsuario }}</p>
+      </ion-label>
+      <ion-button fill="clear" (click)="mostrarFormulario(u)">Editar</ion-button>
+      <ion-button fill="clear" color="danger" (click)="borrarUsuario(u.IdUsuario)">Borrar</ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="mostrarFormulario()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

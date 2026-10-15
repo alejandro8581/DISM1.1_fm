@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/inicio"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Gestión Fichajes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- Zona de Filtros -->
+  <div style="padding: 10px; background: #f4f5f8;">
+    <ion-searchbar 
+      placeholder="Filtrar por ID de Usuario" 
+      type="number"
+      [(ngModel)]="filtroUsuario" 
+      (ionInput)="cargarFichajes()">
+    </ion-searchbar>
+    
+    <ion-item>
+      <ion-input 
+        label="Desde:" 
+        type="date" 
+        [(ngModel)]="filtroFechaInicio" 
+        (ionChange)="cargarFichajes()">
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-input 
+        label="Hasta:" 
+        type="date" 
+        [(ngModel)]="filtroFechaFin" 
+        (ionChange)="cargarFichajes()">
+      </ion-input>
+    </ion-item>
+  </div>
+
+  <!-- Listado de Fichajes -->
+  <ion-list>
+    <ion-item *ngFor="let f of fichajes">
+      <ion-label>
+        <h2>Usuario ID: {{ f.IdUsuario }} | Trabajo ID: {{ f.IdTrabajo }}</h2>
+        <p>Entrada: {{ f.FechaHoraEntrada | date:'medium' }}</p>
+        <p>Salida: {{ f.FechaHoraSalida ? (f.FechaHoraSalida | date:'medium') : 'En curso...' }}</p>
+      </ion-label>
+      <ion-button fill="outline" slot="end" (click)="verMapa(f.GeolocalizacionLatitud, f.GeolocalizacionLongitud)">
+        Ver Mapa
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

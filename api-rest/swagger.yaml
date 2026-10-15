@@ -1,0 +1,290 @@
+openapi: 3.0.0
+info:
+  title: API Registro Horario
+  description: API REST para la gestión de fichajes y trabajadores (Práctica 1 DISM).
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api
+    description: Servidor Local Node.js
+paths:
+  # ---------------- USUARIOS ---------------- #
+  /usuarios:
+    get:
+      summary: Obtiene todos los usuarios
+      operationId: getUsuarios
+      responses:
+        '200':
+          description: Lista de usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Usuario'
+    post:
+      summary: Crea un nuevo usuario
+      operationId: addUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '201':
+          description: Usuario creado
+  
+  /usuarios/{idUsuario}:
+    get:
+      summary: Obtiene un usuario por ID
+      operationId: getUsuarioById
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Datos del usuario
+    put:
+      summary: Actualiza un usuario
+      operationId: updateUsuario
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Usuario'
+      responses:
+        '200':
+          description: Usuario actualizado
+    delete:
+      summary: Borra un usuario
+      operationId: deleteUsuario
+      parameters:
+        - name: idUsuario
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario eliminado
+
+  # ---------------- TRABAJOS ---------------- #
+  /trabajos:
+    get:
+      summary: Obtiene todos los trabajos
+      operationId: getTrabajos
+      responses:
+        '200':
+          description: Lista de trabajos
+    post:
+      summary: Crea un trabajo
+      operationId: addTrabajo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trabajo'
+      responses:
+        '201':
+          description: Trabajo creado
+
+  /trabajos/{idTrabajo}:
+    delete:
+      summary: Borra un trabajo
+      operationId: deleteTrabajo
+      parameters:
+        - name: idTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Trabajo eliminado
+    put:
+      summary: Actualiza un trabajo
+      operationId: updateTrabajo
+      parameters:
+        - name: idTrabajo
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trabajo'
+      responses:
+        '200':
+          description: Trabajo actualizado
+
+  # ---------------- FICHAJES ---------------- #
+  /fichajes:
+    get:
+      summary: Obtiene los fichajes (permite filtrar por usuario y fechas)
+      operationId: getFichajes
+      parameters:
+        - name: idUsuario
+          in: query
+          schema:
+            type: integer
+          description: Filtrar por ID de usuario
+        - name: fechaInicio
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Fecha de inicio para el filtro
+        - name: fechaFin
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Fecha de fin para el filtro
+        - name: estado
+          in: query
+          schema:
+            type: string
+          description: Permite buscar fichajes 'abiertos' para la comprobación de 12 horas
+      responses:
+        '200':
+          description: Lista de fichajes
+    post:
+      summary: Registra un nuevo fichaje de entrada
+      operationId: addFichaje
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fichaje'
+      responses:
+        '201':
+          description: Fichaje creado
+
+  /fichajes/{idFichaje}:
+    put:
+      summary: Actualiza un fichaje (para registrar la salida)
+      operationId: updateFichaje
+      parameters:
+        - name: idFichaje
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Fichaje'
+      responses:
+        '200':
+          description: Fichaje actualizado cerrado
+    delete:
+      summary: Borra un fichaje
+      operationId: deleteFichaje
+      parameters:
+        - name: idFichaje
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Fichaje eliminado
+
+  # ---------------- API KEY (Opcional para seguridad) ---------------- #
+  /apikey:
+    get:
+      summary: Consulta las ApiKeys
+      operationId: getApiKeys
+      responses:
+        '200':
+          description: Lista de ApiKeys
+
+  # ---------------- LOGIN (Optativo) ---------------- #
+  /login:
+    post:
+      summary: Validación de usuario para la App
+      operationId: loginUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                usuario:
+                  type: string
+                clave:
+                  type: string
+      responses:
+        '200':
+          description: Login correcto
+        '401':
+          description: Credenciales inválidas
+
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        IdUsuario:
+          type: integer
+        Nombre:
+          type: string
+        Usuario:
+          type: string
+        Clave:
+          type: string
+    Trabajo:
+      type: object
+      properties:
+        IdTrabajo:
+          type: integer
+        Nombre:
+          type: string
+    Fichaje:
+      type: object
+      properties:
+        IdFichaje:
+          type: integer
+        FechaHoraEntrada:
+          type: string
+          format: date-time
+        FechaHoraSalida:
+          type: string
+          format: date-time
+        HorasTrabajadas:
+          type: integer
+        IdTrabajo:
+          type: integer
+        IdUsuario:
+          type: integer
+        GeolocalizacionLatitud:
+          type: number
+          format: float
+        GeolocalizacionLongitud:
+          type: number
+          format: float
+    ApiKey:
+      type: object
+      properties:
+        idKey:
+          type: integer
+        Key:
+          type: string
